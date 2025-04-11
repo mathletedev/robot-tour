@@ -1,22 +1,18 @@
 // target time in seconds
-const TARGET_TIME = 20;
+const TARGET_TIME = 200;
 // robot code
 const CODE = `
 UP 1
-RIGHT 1
 UP 1
-RIGHT 1
-UP 1
-RIGHT 1
-UP 1
-RIGHT 1
+UP 2
+DOWN 1
 `;
 
 // ---- BEGIN CONFIG ----
-const TIME_UNIT = 1000;
+const TIME_UNIT = 1120;
 const TIME_180 = 600;
-const TIME_RIGHT = 340;
-const TIME_LEFT = 380;
+const TIME_RIGHT = 320;
+const TIME_LEFT = 350;
 const TIME_PAUSE = -1;
 // ---- END CONFIG ----
 
@@ -84,10 +80,16 @@ const compile = (code: string) => {
     }
 
     let bufferTime = Math.round((TARGET_TIME * 1000 - totalTime) / numPauses);
-    // allow robot to settle
-    bufferTime = Math.max(bufferTime, 100);
-    // don't pause for more than 3 seconds (considered stop)
-    bufferTime = Math.min(bufferTime, 2000);
+    if (bufferTime < 100) {
+        // allow robot to settle
+        bufferTime = 100;
+        console.error("[WARNING] run will exceed target time");
+    }
+    if (bufferTime > 2000) {
+        // don't pause for more than 3 seconds (considered stop)
+        bufferTime = 2000;
+        console.error("[WARNING] run will be under target time");
+    }
 
     gen = gen.map((line) => [line[0] !== -1 ? line[0] : bufferTime, line[1]]);
 
@@ -106,6 +108,11 @@ input.onButtonPressed(Button.A, () => {
     i = 0;
     running = true;
     prevTime = input.runningTime();
+});
+
+input.onButtonPressed(Button.B, () => {
+    motion.stop();
+    running = false;
 });
 
 basic.forever(() => {
