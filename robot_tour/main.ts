@@ -6,12 +6,12 @@ UP 1
 UP 1
 UP 2
 DOWN 1
+LEFT 1
 `;
 
 // ---- BEGIN CONFIG ----
 const TIME_UNIT = 1120;
-const TIME_180 = 600;
-const TIME_RIGHT = 320;
+const TIME_RIGHT = 330;
 const TIME_LEFT = 350;
 const TIME_PAUSE = -1;
 // ---- END CONFIG ----
@@ -60,7 +60,9 @@ const compile = (code: string) => {
         if (dir !== currDir) {
             if (Math.abs(dir - currDir) == 2) {
                 // turn 180
-                write(TIME_180, 2);
+                write(TIME_RIGHT, 2);
+                write(TIME_PAUSE, 0);
+                write(TIME_RIGHT, 2);
                 write(TIME_PAUSE, 0);
             } else if ((dir - currDir + 4) % 4 == 1) {
                 // turn right
@@ -80,16 +82,8 @@ const compile = (code: string) => {
     }
 
     let bufferTime = Math.round((TARGET_TIME * 1000 - totalTime) / numPauses);
-    if (bufferTime < 100) {
-        // allow robot to settle
-        bufferTime = 100;
-        console.error("[WARNING] run will exceed target time");
-    }
-    if (bufferTime > 2000) {
-        // don't pause for more than 3 seconds (considered stop)
-        bufferTime = 2000;
-        console.error("[WARNING] run will be under target time");
-    }
+    bufferTime = Math.max(bufferTime, 200);
+    bufferTime = Math.min(bufferTime, 2000);
 
     gen = gen.map((line) => [line[0] !== -1 ? line[0] : bufferTime, line[1]]);
 
