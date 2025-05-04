@@ -1,18 +1,18 @@
 // target time in seconds
-const TARGET_TIME = 200;
+const TARGET_TIME = 59;
 // robot code
 const CODE = `
+UP 2.5
+RIGHT 4
 UP 1
-UP 1
-UP 2
-DOWN 1
-LEFT 1
+LEFT 0.5
+DOWN 3
 `;
 
 // ---- BEGIN CONFIG ----
 const TIME_UNIT = 1120;
-const TIME_RIGHT = 330;
-const TIME_LEFT = 350;
+const TIME_RIGHT = 300;
+const TIME_LEFT = 300;
 const TIME_PAUSE = -1;
 // ---- END CONFIG ----
 
